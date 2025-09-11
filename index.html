@@ -66,7 +66,7 @@
 
       // Делаем редирект с небольшой задержкой, чтобы Яндекс успел отправить данные.
       // ~600-900 мс — хороший компромисс между сбором статистики и UX.
-      const REDIRECT_DELAY_MS = 800;
+      const REDIRECT_DELAY_MS = 2000;
       setTimeout(function(){
         // replace, чтобы не оставлять страницу в истории браузера
         window.location.replace(redirectUrl);
