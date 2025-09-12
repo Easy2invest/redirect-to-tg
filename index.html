@@ -90,48 +90,5 @@
 <body>
   <h3>Переадресация…</h3>
   <p class="small">Если перенаправление не произошло автоматически — нажмите <a id="manualLink" href="#">сюда</a>.</p>
-
-  <script>
-    (function(){
-      // ------ Настройка: поменяйте на канал по умолчанию ------
-      const DEFAULT_TG = "https://t.me/easy2invest_ru";
-
-      // читаем параметры
-      const params = new URLSearchParams(location.search);
-      const targetParam = params.get('target'); // ожидаем URL, закодированный
-      const postParam = params.get('post');     // альтернативно — id поста (число)
-      let redirectUrl = DEFAULT_TG;
-
-      // 1) если передали post=123 -> собираем ссылку на пост
-      if (postParam && /^\d+$/.test(postParam)) {
-        redirectUrl = DEFAULT_TG.replace(/\/+$/, '') + '/' + postParam;
-      }
-      // 2) если передали target=URL (urlencoded)
-      else if (targetParam) {
-        try {
-          const decoded = decodeURIComponent(targetParam);
-          // разрешаем только ссылки на Telegram (без опасных open-redirect'ов)
-          if (/^https?:\/\/(t\.me|telegram\.me)\/.+/i.test(decoded) || /^tg:\/\//i.test(decoded)) {
-            redirectUrl = decoded;
-          } else {
-            console.warn('Отклонён неподходящий target:', decoded);
-          }
-        } catch(e) {
-          console.warn('Ошибка декодирования target', e);
-        }
-      }
-
-      // Показываем ручную ссылку (для случаев, когда JS отключен)
-      document.getElementById('manualLink').href = redirectUrl;
-
-      // Делаем редирект с небольшой задержкой, чтобы Яндекс успел отправить данные.
-      // ~600-900 мс — хороший компромисс между сбором статистики и UX.
-      const REDIRECT_DELAY_MS = 2000;
-      setTimeout(function(){
-        // replace, чтобы не оставлять страницу в истории браузера
-        window.location.replace(redirectUrl);
-      }, REDIRECT_DELAY_MS);
-    })();
-  </script>
 </body>
 </html>
