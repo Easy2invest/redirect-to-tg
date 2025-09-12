@@ -39,7 +39,7 @@
       const params = new URLSearchParams(location.search);
       const targetParam = params.get('target');
       const postParam = params.get('post');
-      const REDIRECT_DELAY_MS = 1000; // 1 секунда перед редиректом
+      const REDIRECT_DELAY_MS = 1000; // задержка перед редиректом
 
       // формируем ссылку на редирект
       let redirectUrl = DEFAULT_TG;
@@ -61,29 +61,19 @@
         manualLink.href = redirectUrl + (location.search ? sep + location.search.slice(1) : '');
       }
 
-      // функция отправки hit в Метрику и редиректа
-      function sendHitAndRedirect(){
+      // функция отправки hit в Метрику
+      function trySendHit(){
         try {
           if(typeof ym === 'function') ym(104073414,'hit',location.href);
         } catch(e){ console.warn('Ошибка при отправке hit в ym', e); }
-
-        setTimeout(function(){
-          window.location.replace(redirectUrl);
-        }, REDIRECT_DELAY_MS);
       }
 
-      // ждём загрузки ym с расширенной проверкой
-      let tries = 0;
-      const maxTries = 30;   // больше попыток
-      const intervalMs = 300; // интервал между ними
+      // редирект всегда через REDIRECT_DELAY_MS
+      setTimeout(function(){
+        trySendHit(); // пытаемся отправить hit перед редиректом
+        window.location.replace(redirectUrl);
+      }, REDIRECT_DELAY_MS);
 
-      const int = setInterval(function(){
-        tries++;
-        if(typeof ym === 'function' || tries >= maxTries){
-          clearInterval(int);
-          sendHitAndRedirect();
-        }
-      }, intervalMs);
     })();
   </script>
 </body>
