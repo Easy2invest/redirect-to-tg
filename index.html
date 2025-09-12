@@ -60,6 +60,7 @@
     // ждем, чтобы данные успели отправиться
     setTimeout(function(){
       // replace — чтобы не оставлять эту страницу в истории
+      ym(104073414, "hit", window.location.href);
       window.location.replace(redirectUrl);
     }, REDIRECT_DELAY_MS);
   }
