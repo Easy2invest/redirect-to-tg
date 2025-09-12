@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Redirecting to Telegram…</title>
+  <title>Переход в Telegram…</title>
 
   <!-- Яндекс.Метрика: замените 104073414 на свой ID -->
   <script type="text/javascript">
@@ -30,7 +30,7 @@
   </style>
 </head>
 <body>
-  <h3>Переадресация…</h3>
+  <h3>Секунду, открываем Telegram…</h3>
   <p class="small">Если перенаправление не произошло автоматически — нажмите <a id="manualLink" href="#">сюда</a>.</p>
 
   <script>
@@ -39,6 +39,7 @@
       const params = new URLSearchParams(location.search);
       const targetParam = params.get('target');
       const postParam = params.get('post');
+      const REDIRECT_DELAY_MS = 1000; // 1 секунда
 
       // формируем ссылку на редирект
       let redirectUrl = DEFAULT_TG;
@@ -60,16 +61,21 @@
         manualLink.href = redirectUrl + (location.search ? sep + location.search.slice(1) : '');
       }
 
-      // добавляем <meta refresh> для надёжного редиректа
+      // --- отправка хита в Метрику ---
+      try { if(typeof ym==='function') ym(104073414,'hit',location.href); } catch(e){console.warn(e); }
+
+      // --- редирект через небольшую задержку ---
+      setTimeout(function(){
+        window.location.href = redirectUrl;
+      }, REDIRECT_DELAY_MS);
+
+      // --- meta refresh как запасной вариант ---
       const meta = document.createElement('meta');
       meta.httpEquiv = "refresh";
-      meta.content = "1;url=" + redirectUrl; // задержка 1 секунда
+      meta.content = (REDIRECT_DELAY_MS/1000) + ";url=" + redirectUrl;
       document.getElementsByTagName('head')[0].appendChild(meta);
 
-      // также отправляем hit в Метрику (если скрипт успел загрузиться)
-      try { if(typeof ym==='function') ym(104073414,'hit',location.href); } catch(e){console.warn(e);}
     })();
   </script>
 </body>
 </html>
-
