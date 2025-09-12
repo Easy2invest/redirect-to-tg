@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Переход в Telegram…</title>
 
-  <!-- Яндекс.Метрика: замените 104073414 на свой ID -->
+  <!-- Яндекс.Метрика -->
   <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
       m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -39,40 +39,45 @@
       const params = new URLSearchParams(location.search);
       const targetParam = params.get('target');
       const postParam = params.get('post');
-      const REDIRECT_DELAY_MS = 1000; // 1 секунда
+      const REDIRECT_DELAY_MS = 1000;
 
-      // формируем ссылку на редирект
+      // Формируем целевой URL
       let redirectUrl = DEFAULT_TG;
       if(postParam && /^\d+$/.test(postParam)) {
-        redirectUrl = DEFAULT_TG.replace(/\/+$/, '') + '/' + postParam;
+        redirectUrl = DEFAULT_TG + '/' + postParam;
       } else if(targetParam) {
         try {
           const decoded = decodeURIComponent(targetParam);
-          if(/^https?:\/\/(t\.me|telegram\.me)\/.+/i.test(decoded) || /^tg:\/\//i.test(decoded)) {
+          if(/^https?:\/\/(t\.me|telegram\.me)\/.+/i.test(decoded)) {
             redirectUrl = decoded;
           }
         } catch(e){ console.warn('Ошибка декодирования target', e); }
       }
 
-      // обновляем ручную ссылку с query
+      // Обновляем ручную ссылку — ПЕРЕДАЁМ ТОЛЬКО ЦЕЛЕВОЙ URL, БЕЗ UTM!
       const manualLink = document.getElementById('manualLink');
       if(manualLink){
-        const sep = redirectUrl.includes('?') ? '&' : '?';
-        manualLink.href = redirectUrl + (location.search ? sep + location.search.slice(1) : '');
+        manualLink.href = redirectUrl; // ❌ УБРАЛИ передачу location.search!
       }
 
-      // --- отправка хита в Метрику ---
-      try { if(typeof ym==='function') ym(104073414,'hit',location.href); } catch(e){console.warn(e); }
+      // ✅ КЛЮЧЕВОЙ ИСПРАВЛЕНИЕ: НЕ ИСПОЛЬЗУЕМ ym('hit', location.href)
+      // Вместо этого — пусть Метрика сама поймёт UTM при обычной загрузке!
+      // Мы просто гарантируем, что хит зарегистрирован до редиректа.
+      try {
+        if (typeof ym === 'function') {
+          ym(104073414, 'hit'); // 👈 Без параметра — метрика возьмёт текущий URL автоматически!
+        }
+      } catch(e){ console.warn(e); }
 
-      // --- редирект через небольшую задержку ---
+      // Редирект через задержку
       setTimeout(function(){
         window.location.href = redirectUrl;
       }, REDIRECT_DELAY_MS);
 
-      // --- meta refresh как запасной вариант ---
+      // Запасной meta refresh
       const meta = document.createElement('meta');
       meta.httpEquiv = "refresh";
-      meta.content = (REDIRECT_DELAY_MS/1000) + ";url=" + redirectUrl;
+      meta.content = (REDIRECT_DELAY_MS/1000) + ";url=" + encodeURIComponent(redirectUrl);
       document.getElementsByTagName('head')[0].appendChild(meta);
 
     })();
