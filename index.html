@@ -39,7 +39,7 @@
       const params = new URLSearchParams(location.search);
       const targetParam = params.get('target');
       const postParam = params.get('post');
-      const REDIRECT_DELAY_MS = 1000; // 1 секунда
+      const REDIRECT_DELAY_MS = 1000; // короткая задержка
 
       // формируем ссылку на редирект
       let redirectUrl = DEFAULT_TG;
@@ -68,10 +68,10 @@
         } catch(e){ console.warn('Ошибка при отправке hit в ym', e); }
       }
 
-      // редирект через REDIRECT_DELAY_MS
+      // редирект через короткую задержку
       setTimeout(function(){
-        trySendHit(); // пытаемся отправить hit перед редиректом
-        window.location.replace(redirectUrl);
+        trySendHit(); // отправляем hit если можно
+        window.location.replace(redirectUrl); // редирект
       }, REDIRECT_DELAY_MS);
 
     })();
