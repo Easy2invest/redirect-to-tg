@@ -30,7 +30,7 @@
   </style>
 </head>
 <body>
-  <h3>Секунду, открываем Telegram…</h3>
+  <h3>Секунду, открываю Telegram…</h3>
   <p class="small">Если перенаправление не произошло автоматически — нажмите <a id="manualLink" href="#">сюда</a>.</p>
 
   <script>
@@ -41,7 +41,6 @@
       const postParam = params.get('post');
       const REDIRECT_DELAY_MS = 1000;
 
-      // Формируем целевой URL
       let redirectUrl = DEFAULT_TG;
       if(postParam && /^\d+$/.test(postParam)) {
         redirectUrl = DEFAULT_TG + '/' + postParam;
@@ -54,27 +53,21 @@
         } catch(e){ console.warn('Ошибка декодирования target', e); }
       }
 
-      // Обновляем ручную ссылку — ПЕРЕДАЁМ ТОЛЬКО ЦЕЛЕВОЙ URL, БЕЗ UTM!
       const manualLink = document.getElementById('manualLink');
       if(manualLink){
-        manualLink.href = redirectUrl; // ❌ УБРАЛИ передачу location.search!
+        manualLink.href = redirectUrl;
       }
 
-      // ✅ КЛЮЧЕВОЙ ИСПРАВЛЕНИЕ: НЕ ИСПОЛЬЗУЕМ ym('hit', location.href)
-      // Вместо этого — пусть Метрика сама поймёт UTM при обычной загрузке!
-      // Мы просто гарантируем, что хит зарегистрирован до редиректа.
       try {
         if (typeof ym === 'function') {
-          ym(104073414, 'hit'); // 👈 Без параметра — метрика возьмёт текущий URL автоматически!
+          ym(104073414, 'hit'); // ✅ ТОЛЬКО ЭТО — без location.href!
         }
       } catch(e){ console.warn(e); }
 
-      // Редирект через задержку
       setTimeout(function(){
         window.location.href = redirectUrl;
       }, REDIRECT_DELAY_MS);
 
-      // Запасной meta refresh
       const meta = document.createElement('meta');
       meta.httpEquiv = "refresh";
       meta.content = (REDIRECT_DELAY_MS/1000) + ";url=" + encodeURIComponent(redirectUrl);
