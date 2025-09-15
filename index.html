@@ -3,22 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Перехожу в Telegram…</title>
+  <title>Переход в Telegram…</title>
 
   <!-- Яндекс.Метрика -->
   <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
       m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
       m[i].l=1*new Date();
-      k=e.createElement(t),a=e.getElementsByTagName(t)[0];
-      k.async=1;k.src=r;a.parentNode.insertBefore(k,a)
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
     ym(104073414, "init", {
-      clickmap:true,
-      trackLinks:true,
-      accurateTrackBounce:true,
-      webvisor:true
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
     });
   </script>
   <noscript>
@@ -31,8 +30,8 @@
   </style>
 </head>
 <body>
-  <h3>Секунду, открываю Telegram…</h3>
-  <p class="small">Если переход не произошёл автоматически — нажмите <a id="manualLink" href="#">сюда</a>.</p>
+  <h3>Секунду, открываем Telegram…</h3>
+  <p class="small">Если перенаправление не произошло автоматически — нажмите <a id="manualLink" href="#">сюда</a>.</p>
 
   <script>
     (function(){
@@ -40,49 +39,10 @@
       const params = new URLSearchParams(location.search);
       const targetParam = params.get('target');
       const postParam = params.get('post');
-      const REDIRECT_DELAY_MS = 1000;
 
       let redirectUrl = DEFAULT_TG;
-
-      // если задан пост
-      if (postParam && /^\d+$/.test(postParam)) {
-        redirectUrl = DEFAULT_TG.replace(/\/+$/, '') + '/' + postParam;
-      } 
-      // если задан target
-      else if (targetParam) {
+      if(postParam && /^\d+$/.test(postParam)) {
+        redirectUrl = DEFAULT_TG + '/' + postParam;
+      } else if(targetParam) {
         try {
-          const decoded = decodeURIComponent(targetParam);
-          if (/^https?:\/\/(t\.me|telegram\.me)\/.+/i.test(decoded)) {
-            redirectUrl = decoded;
-          }
-        } catch(e) { console.warn('Ошибка декодирования target', e); }
-      }
-
-      // обновляем ручную ссылку
-      const manualLink = document.getElementById('manualLink');
-      if (manualLink) {
-        manualLink.href = redirectUrl;
-      }
-
-      // отправляем хит с текущим URL (включая utm)
-      try {
-        if (typeof ym === 'function') {
-          ym(104073414, 'hit', location.href);
-        }
-      } catch(e){ console.warn(e); }
-
-      // редирект через задержку
-      setTimeout(function(){
-        window.location.href = redirectUrl;
-      }, REDIRECT_DELAY_MS);
-
-      // запасной meta refresh
-      const meta = document.createElement('meta');
-      meta.httpEquiv = "refresh";
-      meta.content = (REDIRECT_DELAY_MS/1000) + ";url=" + redirectUrl;
-      document.getElementsByTagName('head')[0].appendChild(meta);
-
-    })();
-  </script>
-</body>
-</html>
+          con
